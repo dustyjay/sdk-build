@@ -10,7 +10,7 @@ class FoodCourtOrder {
 
   static startOrder () {
     if (!FoodCourtOrder.options) {
-      throw new Error(
+      console.warn(
         "Options not set. Please set options using setOptions() method."
       );
     }
@@ -23,7 +23,7 @@ class FoodCourtOrder {
     } = FoodCourtOrder.options;
 
     if (!publicKey || !phone || !user.firstname || !user.lastname || typeof onCompleteOrder !== 'function') {
-      throw new Error("Incomplete options provided.");
+      console.error("Incomplete options provided.");
     }
 
     // Initialize payment iframe
@@ -37,11 +37,11 @@ function createIframe (options) {
   // Create iframe
   const iframe = document.createElement('iframe')
   iframe.setAttribute('allowtransparency', 'true')
-  iframe.width = '100%'
-  iframe.height = '100%'
+  iframe.width = '70%'
+  iframe.height = '80%'
   iframe.style.position = 'fixed'
-  iframe.style.top = '0'
-  iframe.style.left = '0'
+  iframe.style.top = '10%'
+  iframe.style.left = '15%'
   iframe.style.zIndex = '5'
   iframe.style.background = 'rgba(0, 0, 0, 0.0)'
   iframe.style.outline = 'none'
@@ -60,16 +60,19 @@ function createIframe (options) {
 
   //add close iframe listener
   iframe.addEventListener('load', function () {
+    console.log('loaded iframe')
     // Add event listener for messages received from the iframe
     window.addEventListener('message', function (event) {
       // Check if the event originated from the iframe and contains the close message
       // Verify the origin for security
       if (event.origin !== new URL(iframe.src).origin) {
+        console.log('wrong URL source')
         return;
       }
 
       // send out data, onCompleteOrder
       if (event.data && event.data.type === 'parentCallback') {
+        console.log('parentCallback', event)
         const { callbackName, data } = event.data;
         if (callbackName === 'onCompleteOrder') {
           // Execute the desired function in the iframe
@@ -80,6 +83,7 @@ function createIframe (options) {
 
       // close iframe
       if (event.data === 'close-iframe') {
+        console.log('close', event)
         // Remove the iframe from the document
         if (iframe) {
           try {
@@ -90,8 +94,6 @@ function createIframe (options) {
       }
     })
   })
-
-  // In the iframe
 
   // Add iframe to page
   document.body.appendChild(iframe)
