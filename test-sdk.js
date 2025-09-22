@@ -29,6 +29,8 @@ class PagaCheckout {
     }
 }
 
+window.PagaCheckout = PagaCheckout
+
 function createIframe(options) {
     // Create iframe
     const iframe = document.createElement('iframe')
